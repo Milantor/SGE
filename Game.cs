@@ -5,6 +5,8 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Graphics.OpenGL4;
+using System.Reflection.Metadata;
+using System.Xml.Linq;
 
 namespace ScientificGraphicsEngine;
 
@@ -90,9 +92,9 @@ public class Game(int width, int height, string title) : GameWindow(GameWindowSe
         GL.Clear(ClearBufferMask.ColorBufferBit);
         shader.Use();
         var timeColor = (float)Math.Sin(_timer.Elapsed.TotalSeconds) / 2.0f + 0.5f;
-        GL.Uniform4(GL.GetUniformLocation(shader.Handle, "inColor"),
-            new Vector4(timeColor, timeColor, timeColor, 1.0f));
-
+        int location = GL.GetUniformLocation(shader.Handle, "transform");
+        Matrix4 matrix = Matrix4.CreateRotationY(float.Asin(timeColor));
+        GL.UniformMatrix4(location, true, ref matrix);
         GL.BindVertexArray(vao);
         GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
         //GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
